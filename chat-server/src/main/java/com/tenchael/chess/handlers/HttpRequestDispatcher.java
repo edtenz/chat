@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.tenchael.chess.config.Constants.ACTION_PATTERN;
 import static com.tenchael.chess.config.Constants.RESOURCES_PATTERN;
 
 public class HttpRequestDispatcher {
@@ -17,6 +18,10 @@ public class HttpRequestDispatcher {
         String uri = request.uri();
         if (isResouce(uri)) {
             ResourceProcessor.process(ctx, request);
+            return;
+        } else if (isAction(uri)) {
+            //TODO action processor
+            return;
         }
     }
 
@@ -27,6 +32,19 @@ public class HttpRequestDispatcher {
         }
         for (String resourcePattern : RESOURCES_PATTERN) {
             if (uri.endsWith(resourcePattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAction(String uri) {
+        int paramStart = uri.indexOf("?");
+        if (paramStart != -1) {
+            uri = uri.substring(0, paramStart);
+        }
+        for (String actionPattern : ACTION_PATTERN) {
+            if (uri.endsWith(actionPattern)) {
                 return true;
             }
         }

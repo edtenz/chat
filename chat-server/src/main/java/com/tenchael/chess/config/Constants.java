@@ -14,4 +14,9 @@ public interface Constants {
             ".ico"
     };
 
+    String[] ACTION_PATTERN = new String[]{
+            ".action",
+            ".do"
+    };
+
 }
