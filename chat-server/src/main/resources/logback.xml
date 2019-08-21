@@ -4,12 +4,12 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+                %d{ISO8601} - %-5p [%t:%C{1}@%L] - %m%n
             </Pattern>
         </layout>
     </appender>
 
-    <logger name="com.tenchael.chess" level="TRACE" additivity="false">
+    <logger name="com.tenchael.chat" level="TRACE" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

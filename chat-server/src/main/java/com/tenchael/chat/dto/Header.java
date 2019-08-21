@@ -1,4 +1,4 @@
-package com.tenchael.chess.dto;
+package com.tenchael.chat.dto;
 
 import com.alibaba.fastjson.JSON;
 
@@ -28,6 +28,7 @@ public class Header {
     public void setType(Type type) {
         this.type = type;
     }
+
 
     public String getRoomId() {
         return roomId;

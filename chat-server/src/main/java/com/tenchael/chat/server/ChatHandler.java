@@ -1,14 +1,14 @@
-package com.tenchael.chess.handlers;
+package com.tenchael.chat.server;
 
-import com.tenchael.chess.dto.ChatDto;
-import com.tenchael.chess.dto.Header;
+import com.tenchael.chat.dto.RespDto;
+import com.tenchael.chat.dto.Header;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ChatHandler extends SimpleChannelInboundHandler<ChatDto> {
+public class ChatHandler extends SimpleChannelInboundHandler<RespDto> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatHandler.class);
 
@@ -26,7 +26,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<ChatDto> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ChatDto msg)
+    protected void channelRead0(ChannelHandlerContext ctx, RespDto msg)
             throws Exception {
         Header reqHeader = msg.getHeader();
         LOGGER.debug("read content: {}", reqHeader);

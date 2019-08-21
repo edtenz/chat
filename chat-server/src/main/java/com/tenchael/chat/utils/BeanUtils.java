@@ -1,4 +1,4 @@
-package com.tenchael.chess.utils;
+package com.tenchael.chat.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

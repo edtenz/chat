@@ -1,7 +1,8 @@
-package com.tenchael.chess;
+package com.tenchael.chat;
 
-import com.tenchael.chess.config.Configs;
-import com.tenchael.chess.config.Constants;
+import com.tenchael.chat.config.Configs;
+import com.tenchael.chat.config.Constants;
+import com.tenchael.chat.server.HttpRequestDispatcher;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -25,14 +26,18 @@ public class ChatServer {
             ImmediateEventExecutor.INSTANCE);
     private final EventLoopGroup group = new NioEventLoopGroup();
     private Channel channel;
+    private final HttpRequestDispatcher dispatcher;
 
+    public ChatServer() {
+        dispatcher = new HttpRequestDispatcher();
+    }
 
     public static void main(String[] args) throws Exception {
         final ChatServer chatServer = new ChatServer();
 
         int port = Configs.getInt(Constants.PORT, 8080);
         ChannelFuture future = chatServer.start(new InetSocketAddress(port));
-        LOGGER.info("started chess server, listen on: {}", port);
+        LOGGER.info("started chat server, listen on: {}", port);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -55,7 +60,7 @@ public class ChatServer {
     }
 
     protected ChannelInitializer<Channel> createInitializer(ChannelGroup group) {
-        return new ChatServerInitializer(group);
+        return new ChatServerInitializer(group, dispatcher);
     }
 
     public void destroy() {

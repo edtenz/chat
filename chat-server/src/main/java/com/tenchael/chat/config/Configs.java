@@ -1,6 +1,6 @@
-package com.tenchael.chess.config;
+package com.tenchael.chat.config;
 
-import com.tenchael.chess.ChatServer;
+import com.tenchael.chat.ChatServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

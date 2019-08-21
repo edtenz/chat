@@ -1,6 +1,8 @@
-package com.tenchael.chess.handlers;
+package com.tenchael.chat.server;
 
 
+import com.tenchael.chat.config.Configs;
+import com.tenchael.chat.config.Constants;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -12,30 +14,38 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
 
-    private final String wsUri;
+    private final String wsUri = Configs.get(Constants.WEB_SOCKET_URI, "/ws");
+
+    private final HttpRequestDispatcher dispatcher;
 
     private static final AttributeKey<HttpRequestDispatcher> HTTP_DISPATCHER =
             AttributeKey.valueOf("HttpRequestDispatcher");
 
-    public HttpRequestHandler(String wsUri) {
-        this.wsUri = wsUri;
+    public HttpRequestHandler(HttpRequestDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        ctx.channel().attr(HTTP_DISPATCHER).setIfAbsent(new HttpRequestDispatcher());
+//        ctx.channel().attr(HTTP_DISPATCHER).setIfAbsent(new HttpRequestDispatcher());
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request)
             throws Exception {
-        LOGGER.debug("request uri: {}", request.uri());
+        if ("/".equals(request.uri())) {
+            String uri = "/" + Configs.get(Constants.INDEX_PAGE, "index.html");
+            request.setUri(uri);
+        }
+        LOGGER.info("request uri: {}, method: {}",
+                request.uri(), request.method());
+
+
         if (wsUri.equalsIgnoreCase(request.uri())) {
             ctx.fireChannelRead(request.retain());
         } else {
-            ctx.channel().attr(HTTP_DISPATCHER).get()
-                    .dispatch(ctx, request);
+            dispatcher.dispatch(ctx, request);
         }
     }
 

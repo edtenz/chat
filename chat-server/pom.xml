@@ -112,7 +112,7 @@
             <!--<configuration>-->
             <!--<archive>-->
             <!--<manifest>-->
-            <!--<mainClass>com.tenchael.chess.ChatServer/mainClass>-->
+            <!--<mainClass>com.tenchael.chatChatServer/mainClass>-->
             <!--</manifest>-->
             <!--</archive>-->
             <!--</configuration>-->

@@ -1,8 +1,11 @@
-package com.tenchael.chess;
+package com.tenchael.chat;
 
-import com.tenchael.chess.handlers.ChatHandler;
-import com.tenchael.chess.handlers.HttpRequestHandler;
-import com.tenchael.chess.handlers.TextWebSocketFrameHandler;
+import com.tenchael.chat.config.Configs;
+import com.tenchael.chat.config.Constants;
+import com.tenchael.chat.server.ChatHandler;
+import com.tenchael.chat.server.HttpRequestDispatcher;
+import com.tenchael.chat.server.HttpRequestHandler;
+import com.tenchael.chat.server.TextWebSocketFrameHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -15,9 +18,11 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class ChatServerInitializer extends ChannelInitializer<Channel> {
     private final ChannelGroup group;
+    private final HttpRequestDispatcher dispatcher;
 
-    public ChatServerInitializer(ChannelGroup group) {
+    public ChatServerInitializer(ChannelGroup group, HttpRequestDispatcher dispatcher) {
         this.group = group;
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -27,8 +32,9 @@ public class ChatServerInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new HttpObjectAggregator(64 * 1024));
         pipeline.addLast(new ChunkedWriteHandler());
-        pipeline.addLast(new HttpRequestHandler("/ws"));
-        pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+        pipeline.addLast(new HttpRequestHandler(dispatcher));
+        pipeline.addLast(new WebSocketServerProtocolHandler(
+                Configs.get(Constants.WEB_SOCKET_URI, "/ws")));
         pipeline.addLast(new TextWebSocketFrameHandler(group));
         pipeline.addLast(new ChatHandler(group));
     }

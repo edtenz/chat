@@ -1,10 +1,10 @@
-package com.tenchael.chess.handlers;
+package com.tenchael.chat.server;
 
-import com.tenchael.chess.dto.ChatDto;
-import com.tenchael.chess.dto.Header;
-import com.tenchael.chess.dto.Operation;
-import com.tenchael.chess.dto.Type;
-import com.tenchael.chess.utils.BeanUtils;
+import com.tenchael.chat.dto.RespDto;
+import com.tenchael.chat.dto.Header;
+import com.tenchael.chat.dto.Operation;
+import com.tenchael.chat.dto.Type;
+import com.tenchael.chat.utils.BeanUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -37,7 +37,7 @@ public class TextWebSocketFrameHandler
             header.setOperation(Operation.connect);
             header.setClientId(ctx.channel().id().asShortText());
 
-            ChatDto respDto = new ChatDto(header, new HashMap<>());
+            RespDto respDto = new RespDto(header, new HashMap<>());
             String respText = BeanUtils.objectToJson(respDto);
             LOGGER.debug("handshake response: {}", respText);
 
@@ -53,8 +53,8 @@ public class TextWebSocketFrameHandler
     public void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
         String text = msg.text();
         LOGGER.debug("read message: {}", text);
-        ChatDto chatDto = BeanUtils.jsonToObject(text, ChatDto.class);
-        ctx.fireChannelRead(chatDto);
+        RespDto respDto = BeanUtils.jsonToObject(text, RespDto.class);
+        ctx.fireChannelRead(respDto);
     }
 
 

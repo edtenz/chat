@@ -1,4 +1,4 @@
-package com.tenchael.chess.dto;
+package com.tenchael.chat.dto;
 
 public enum Type {
     req, resp
