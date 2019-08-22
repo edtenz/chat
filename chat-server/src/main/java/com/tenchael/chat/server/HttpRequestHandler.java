@@ -6,7 +6,6 @@ import com.tenchael.chat.config.Constants;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +16,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private final String wsUri = Configs.get(Constants.WEB_SOCKET_URI, "/ws");
 
     private final HttpRequestDispatcher dispatcher;
-
-    private static final AttributeKey<HttpRequestDispatcher> HTTP_DISPATCHER =
-            AttributeKey.valueOf("HttpRequestDispatcher");
 
     public HttpRequestHandler(HttpRequestDispatcher dispatcher) {
         this.dispatcher = dispatcher;
@@ -51,9 +47,14 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        LOGGER.error("error occurs", cause);
         ctx.close();
     }
 
-
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        LOGGER.debug("read complete");
+        super.channelReadComplete(ctx);
+        ctx.flush();
+    }
 }

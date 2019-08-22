@@ -24,6 +24,7 @@ public class AuthProcessor implements RequestProcessor {
 
 
     public AuthProcessor() {
+        //TODO use DB repository user info
         userMap.put("test", "123456");
         userMap.put("root", "root");
         userMap.put("teng", "teng");
@@ -42,13 +43,13 @@ public class AuthProcessor implements RequestProcessor {
             respDto.setStatus(Status.notOk);
             respDto.setErrMessage(String.format("user [%s] not exists", auth.getUsername()));
             byte[] json = BeanUtils.objectToJson(respDto).getBytes(StandardCharsets.UTF_8);
-            writeResponse(ctx, request, Unpooled.wrappedBuffer(json), String.valueOf(json.length));
+            writeResponse(ctx, request, Unpooled.wrappedBuffer(json));
             return;
         }
     }
 
 
-    private void writeResponse(ChannelHandlerContext ctx, HttpRequest request, ByteBuf buf, CharSequence contentLength) {
+    private void writeResponse(ChannelHandlerContext ctx, HttpRequest request, ByteBuf buf) {
         boolean keepAlive = HttpUtil.isKeepAlive(request);
         FullHttpResponse response = new DefaultFullHttpResponse(
                 request.protocolVersion(),
@@ -57,7 +58,7 @@ public class AuthProcessor implements RequestProcessor {
         HttpHeaders headers = response.headers();
         headers.set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
         headers.set(HttpHeaderNames.CONNECTION, HttpUtil.isKeepAlive(request));
-        headers.set(HttpHeaderNames.CONTENT_LENGTH, contentLength);
+        headers.set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
 
         if (!keepAlive) {
             ctx.write(response).addListener(ChannelFutureListener.CLOSE);
