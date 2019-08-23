@@ -1,9 +1,11 @@
 package com.tenchael.chat.server;
 
+import com.tenchael.chat.config.Constants;
 import com.tenchael.chat.dto.AuthDto;
 import com.tenchael.chat.dto.RespDto;
 import com.tenchael.chat.dto.Status;
 import com.tenchael.chat.utils.BeanUtils;
+import com.tenchael.chat.utils.MixAll;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -12,9 +14,9 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class AuthProcessor implements RequestProcessor {
 
@@ -32,20 +34,41 @@ public class AuthProcessor implements RequestProcessor {
 
     @Override
     public void submitRequest(ChannelHandlerContext ctx, FullHttpRequest request) {
-        String content = request.content().toString(StandardCharsets.UTF_8);
+        String content = request.content().toString(Constants.ENCODING);
         AuthDto auth = BeanUtils.jsonToObject(content, AuthDto.class);
         String upass = userMap.get(auth.getUsername());
 
-        RespDto respDto = new RespDto();
+        String respContent = null;
         if (upass == null) {
             //user not exists
-            LOGGER.info("user {} does not exists", auth.getUsername());
+            LOGGER.warn("user {} does not exists", auth.getUsername());
+            RespDto respDto = new RespDto();
             respDto.setStatus(Status.notOk);
-            respDto.setErrMessage(String.format("user [%s] not exists", auth.getUsername()));
-            byte[] json = BeanUtils.objectToJson(respDto).getBytes(StandardCharsets.UTF_8);
-            writeResponse(ctx, request, Unpooled.wrappedBuffer(json));
-            return;
+            respDto.setErrMessage(String.format("user[%s] not exists", auth.getUsername()));
+            respContent = BeanUtils.objectToJson(respDto);
+        } else if (!upass.equals(auth.getPassword())) {
+            LOGGER.warn("user {} input wrong password", auth.getUsername());
+            RespDto respDto = new RespDto();
+            respDto.setStatus(Status.notOk);
+            respDto.setErrMessage("password wrong");
+            respContent = BeanUtils.objectToJson(respDto);
+        } else {
+            LOGGER.info("user {} auth success", auth.getUsername());
+            RespDto respDto = new RespDto();
+            respDto.setStatus(Status.ok);
+            Map<String, Object> body = new HashMap<>();
+            body.put("token", UUID.randomUUID().toString());
+            respDto.setBody(body);
+            respContent = BeanUtils.objectToJson(respDto);
         }
+
+        LOGGER.debug("response content: {}", respContent);
+        writeResponse(ctx, request, respContent);
+    }
+
+    private void writeResponse(ChannelHandlerContext ctx, HttpRequest request, String content) {
+        ByteBuf respBuf = Unpooled.wrappedBuffer(MixAll.stringToBytes(content));
+        writeResponse(ctx, request, respBuf);
     }
 
 

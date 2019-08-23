@@ -8,6 +8,12 @@
     <script type="text/javascript">
         var ws;
 
+        const respStatus = {
+            ok: "ok",
+            notOk: "notOk",
+            err: "err"
+        };
+
         function login() {
             var username = $("#username").val();
             var password = $("#password").val();
@@ -23,9 +29,55 @@
                     password: password
                 }),
                 success: function(data, status, jqXHR) {
-                    console.log('status: ' + status + ', data: ' + JSON.parse(data));
+                    console.log('status: ' + status + 'jqXHR: ' + jqXHR + ', data: ' + JSON.stringify(data));
+                    var result = resultParse(data);
+                    if (result.status) {
+                        console.log(result.content);
+                    } else {
+                        alert(result.content);
+                    }
                 }
             });
+        }
+
+        function redirect(url, token) {
+            $.ajax({
+                type: "GET",
+                url: 'chat.html',
+                dataType: 'json',
+                // async: false,
+                data: JSON.stringify({
+                    username: username,
+                    password: password
+                }),
+                success: function(data, status, jqXHR) {
+                    console.log('status: ' + status + 'jqXHR: ' + jqXHR + ', data: ' + JSON.stringify(data));
+                    var result = resultParse(data);
+                    if (result.status) {
+                        console.log(result.content);
+                    } else {
+                        alert(result.content);
+                    }
+                }
+            });
+        }
+
+        function resultParse(data) {
+            var jsonResult = JSON.stringify(data);
+            console.log(jsonResult);
+            var respDto = JSON.parse(jsonResult);
+            if (respDto["status"] === respStatus.ok) {
+                return {
+                    status: true,
+                    content: respDto["body"]
+                };
+            } else {
+                return {
+                    status: false,
+                    content: respDto["errMessage"]
+                }
+            }
+
         }
     </script>
 </head>
