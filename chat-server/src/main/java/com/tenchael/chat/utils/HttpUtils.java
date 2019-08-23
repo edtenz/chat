@@ -24,13 +24,18 @@ public class HttpUtils {
             for (String item : items) {
                 String[] kv = item.split("=");
                 if (kv.length == 1) {
-                    params.put(kv[0], null);
+                    params.put(kv[0], "");
                 } else {
                     params.put(kv[0], kv[1]);
                 }
             }
         }
         return params;
+    }
+
+    public static String uriPath(String uriString) {
+        URI uri = URI.create(uriString);
+        return uri.getPath();
     }
 
 }

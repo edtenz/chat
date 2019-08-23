@@ -3,6 +3,7 @@ package com.tenchael.chat.server;
 import com.tenchael.chat.config.Configs;
 import com.tenchael.chat.config.Constants;
 import com.tenchael.chat.exceptions.ProcessException;
+import com.tenchael.chat.utils.HttpUtils;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -72,13 +73,14 @@ public class ResourceProcessor implements RequestProcessor {
     private void contentTypeSetting(HttpRequest request, HttpResponse response) {
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
 
-        if (request.uri().endsWith(".js")) {
+        String uri = HttpUtils.uriPath(request.uri());
+        if (uri.endsWith(".js")) {
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/x-javascript");
         }
-        if (request.uri().endsWith(".css")) {
+        if (uri.endsWith(".css")) {
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/css");
         }
-        if (request.uri().endsWith(".ico")) {
+        if (uri.endsWith(".ico")) {
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/x-icon");
         }
     }

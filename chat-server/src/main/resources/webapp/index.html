@@ -33,6 +33,11 @@
                     var result = resultParse(data);
                     if (result.status) {
                         console.log(result.content);
+                        // var respBody = JSON.parse(result.content);
+                        redirect('chat.html', {
+                            username: username,
+                            token: result.content.token
+                        });
                     } else {
                         alert(result.content);
                     }
@@ -40,26 +45,30 @@
             });
         }
 
-        function redirect(url, token) {
-            $.ajax({
-                type: "GET",
-                url: 'chat.html',
-                dataType: 'json',
-                // async: false,
-                data: JSON.stringify({
-                    username: username,
-                    password: password
-                }),
-                success: function(data, status, jqXHR) {
-                    console.log('status: ' + status + 'jqXHR: ' + jqXHR + ', data: ' + JSON.stringify(data));
-                    var result = resultParse(data);
-                    if (result.status) {
-                        console.log(result.content);
-                    } else {
-                        alert(result.content);
+        function redirect(url, params) {
+            window.location.replace(paramsToQuery(url, params));
+        }
+
+        function paramsToQuery(url, parmas) {
+            var urlWithQuery = url;
+            var index = 0;
+            var count = Object.keys(parmas).length;
+            for (var key in parmas) {
+                if (parmas.hasOwnProperty(key)) {
+                    console.log(key, parmas[key]);
+                    if (index === 0) {
+                        urlWithQuery = urlWithQuery + "?";
                     }
+                    urlWithQuery = urlWithQuery + key + "=" + parmas[key];
+
+                    if (index !== count - 1) {
+                        urlWithQuery = urlWithQuery + "&";
+                    }
+                    index = index + 1;
                 }
-            });
+            }
+            console.debug("url with query: " + urlWithQuery);
+            return urlWithQuery;
         }
 
         function resultParse(data) {
