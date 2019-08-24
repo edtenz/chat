@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Chat Room</title>
     <script src="js/jquery-3.4.1.min.js"></script>
-    <!-- <script src="js/fabric-3.2.0.min.js"></script> -->
+    <script src="js/chat.js"></script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -19,64 +19,71 @@
     <button onclick="sendMsg()">send</button>
 
     <script>
-        // layout settings
+        var pageURL = $(location).attr("href");
+        var token;
+        var username;
         // websocket client
         var ws;
-        var pageURL = $(location).attr("href");
 
         $(document).ready(function() {
             console.log("page url: ", pageURL);
             var location = getLocation(pageURL);
             var query = getJsonFromUrl(location.search);
-            var token = query["token"]
+            token = query["token"];
+            username = query["username"];
             console.log("token: ", token);
-            if (token !== undefined && token !== "") {
-                console.warn("no token is setting");
-            }
+            console.log("username: ", username);
+
             var wsUri = getWsUri(location);
             console.log("ws uri: ", wsUri);
-            ws = connectToWS(wsUri, onMsgCallback = msgListen);
+            ws = connectToWS(wsUri,
+                onMsg = function(evt) {
+                    var leng;
+                    if (event.data.size === undefined) {
+                        leng = event.data.length
+                    } else {
+                        leng = event.data.size
+                    }
+                    console.log("onmessage. size: " + leng + ", content: " + event.data);
+                },
+                onOpen = function(evt) {
+                    console.debug("connection open");
+                },
+                onClose = function(evt) {
+                    console.debug("connection close");
+                },
+                onErr = function(evt) {
+                    console.warn("connection error");
+                });
         });
 
-        function connectToWS(endpoint, onMsgCallback) {
-            var ws = new WebSocket(endpoint);
 
-            ws.onmessage = onMsgCallback;
-            ws.onopen = function(evt) {
-                console.log("onopen.");
-            };
-            ws.onclose = function(evt) {
-                console.log("onclose.");
-            };
-            ws.onerror = function(evt) {
-                console.log("Error!");
-            };
-            return ws;
-        }
 
         function sendMsg() {
-            $("#inputText").val("Hello World");
+            var content = $("#inputText").val();
+            console.debug("content: " + content);
+            $.ajax({
+                type: "POST",
+                url: 'notify.action',
+                dataType: 'json',
+                async: true,
+                headers: {
+                    token: token,
+                    username: username
+                },
+                data: JSON.stringify({
+                    content: content,
+                    users: [username, "root"]
+                }),
+                success: function(data, status, jqXHR) {
+                    console.log('status: ' + status + 'jqXHR: ' + jqXHR + ', data: ' + JSON.stringify(data));
+                }
+            });
         }
 
         function send(ws, msg) {
             console.log("send msg: ", msg);
             ws.send(msg);
-        }
-
-        function msgListen(event) {
-            var leng;
-            if (event.data.size === undefined) {
-                leng = event.data.length
-            } else {
-                leng = event.data.size
-            }
-            console.log("onmessage. size: " + leng + ", content: " + event.data);
-        }
-
-        function getLocation(href) {
-            var l = document.createElement("a");
-            l.href = href;
-            return l;
         }
 
         function getWsUri(location) {

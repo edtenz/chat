@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Echo page</title>
     <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/chat.js"></script>
     <script type="text/javascript">
         var ws;
 
@@ -43,32 +44,6 @@
                     }
                 }
             });
-        }
-
-        function redirect(url, params) {
-            window.location.replace(paramsToQuery(url, params));
-        }
-
-        function paramsToQuery(url, parmas) {
-            var urlWithQuery = url;
-            var index = 0;
-            var count = Object.keys(parmas).length;
-            for (var key in parmas) {
-                if (parmas.hasOwnProperty(key)) {
-                    console.log(key, parmas[key]);
-                    if (index === 0) {
-                        urlWithQuery = urlWithQuery + "?";
-                    }
-                    urlWithQuery = urlWithQuery + key + "=" + parmas[key];
-
-                    if (index !== count - 1) {
-                        urlWithQuery = urlWithQuery + "&";
-                    }
-                    index = index + 1;
-                }
-            }
-            console.debug("url with query: " + urlWithQuery);
-            return urlWithQuery;
         }
 
         function resultParse(data) {

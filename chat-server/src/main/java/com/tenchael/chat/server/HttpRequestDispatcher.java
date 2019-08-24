@@ -26,7 +26,7 @@ public class HttpRequestDispatcher {
 
     public HttpRequestDispatcher() {
         actionProcessors.put("/auth.action", new AuthProcessor());
-        actionProcessors.put("/chat.action", new AuthProcessor());
+        actionProcessors.put("/notify.action", new NotifyProcessor());
     }
 
     public void dispatch(ChannelHandlerContext ctx, FullHttpRequest request) throws IOException {
