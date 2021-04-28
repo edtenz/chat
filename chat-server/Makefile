@@ -14,3 +14,7 @@ serve: ## run server
 .PHONY: exec
 exec: ## execute server, equals with make serve
 	@mvn clean compile exec:java
+
+.PHONY: lint
+lint: ## lint
+	@mvn sonar:sonar

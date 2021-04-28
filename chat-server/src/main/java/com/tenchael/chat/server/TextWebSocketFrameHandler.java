@@ -1,8 +1,8 @@
 package com.tenchael.chat.server;
 
-import com.tenchael.chat.dto.RespDto;
 import com.tenchael.chat.dto.Header;
 import com.tenchael.chat.dto.Operation;
+import com.tenchael.chat.dto.RespDto;
 import com.tenchael.chat.dto.Type;
 import com.tenchael.chat.utils.BeanUtils;
 import io.netty.channel.ChannelHandlerContext;

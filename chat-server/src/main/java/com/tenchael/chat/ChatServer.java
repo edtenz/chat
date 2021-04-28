@@ -25,8 +25,8 @@ public class ChatServer {
     private final ChannelGroup channelGroup = new DefaultChannelGroup(
             ImmediateEventExecutor.INSTANCE);
     private final EventLoopGroup group = new NioEventLoopGroup();
-    private Channel channel;
     private final HttpRequestDispatcher dispatcher;
+    private Channel channel;
 
     public ChatServer() {
         dispatcher = new HttpRequestDispatcher();

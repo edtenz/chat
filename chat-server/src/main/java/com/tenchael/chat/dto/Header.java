@@ -46,12 +46,12 @@ public class Header {
         this.clientId = clientId;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getToken() {
         return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Operation getOperation() {
