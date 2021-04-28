@@ -19,7 +19,7 @@ public class HttpRequestDispatcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestDispatcher.class);
 
     private final RequestProcessor processor = new ResourceProcessor(Configs.get(Constants.WEB_APP_BASE,
-            Configs.DEFAULT_WEB_APP_BASE));
+            Configs.defaultWebAppBase));
 
 
     private final Map<String, RequestProcessor> actionProcessors = new HashMap<>();

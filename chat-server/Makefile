@@ -2,8 +2,8 @@ ENV := $(if ${env},${env},"test")
 SRC_MAIN := "com.tenchael.chat.ChatServer"
 export SRC_MAIN
 
-.PHONY: package
-package: ## package
+.PHONY: build
+build: ## package
 	@mvn clean package
 
 .PHONY: serve

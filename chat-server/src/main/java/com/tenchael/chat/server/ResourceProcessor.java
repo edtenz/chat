@@ -35,8 +35,7 @@ public class ResourceProcessor implements RequestProcessor {
 
         String path = resourcePath(request);
         LOGGER.trace("read file: {}", path);
-        try {
-            RandomAccessFile file = new RandomAccessFile(path, "r");
+        try (RandomAccessFile file = new RandomAccessFile(path, "r")) {
             HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.OK);
             contentTypeSetting(request, response);
 
@@ -90,7 +89,7 @@ public class ResourceProcessor implements RequestProcessor {
         if ("/".equals(request.uri())) {
             path = resourceBase + Configs.get(Constants.INDEX_PAGE, "index.html");
         } else {
-            int index = request.uri().indexOf("?");
+            int index = request.uri().indexOf('?');
             if (index == -1) {
                 path = resourceBase + request.uri();
             } else {

@@ -14,7 +14,7 @@ public class Configs {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Configs.class);
     private static final Properties properties = new Properties();
-    public static String DEFAULT_WEB_APP_BASE;
+    public static String defaultWebAppBase;
 
     static {
         init();
@@ -43,10 +43,10 @@ public class Configs {
 
         // setting default webApp base
         try {
-            DEFAULT_WEB_APP_BASE = Configs.class.getProtectionDomain()
+            defaultWebAppBase = Configs.class.getProtectionDomain()
                     .getCodeSource().getLocation().toURI().toString() + "webapp/";
-            DEFAULT_WEB_APP_BASE = !DEFAULT_WEB_APP_BASE.contains("file:") ? DEFAULT_WEB_APP_BASE : DEFAULT_WEB_APP_BASE.substring(5);
-            LOGGER.info("default webAppBase: {}", DEFAULT_WEB_APP_BASE);
+            defaultWebAppBase = !defaultWebAppBase.contains("file:") ? defaultWebAppBase : defaultWebAppBase.substring(5);
+            LOGGER.info("default webAppBase: {}", defaultWebAppBase);
         } catch (URISyntaxException e) {
             LOGGER.error("uri syntax error", e);
         }
